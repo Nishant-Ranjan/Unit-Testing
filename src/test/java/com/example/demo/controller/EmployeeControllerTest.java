@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.example.demo.model.Employee;
 import com.example.demo.service.EmployeeService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @WebMvcTest(EmployeeController.class)
@@ -52,6 +53,19 @@ public class EmployeeControllerTest {
 		JSONAssert.assertEquals("[{empId:101,empName:'Nishant Ranjan'}]", result.getResponse().getContentAsString(), false);
 	}
 	
+	@Test
+	public void testSaveEmployees() throws Exception {
+		Employee emp = new Employee(102, "Prashant", 28, "BA", new Double(12000), new Double(2000), new Double(4000));
+	//	when(employeeServiceMock.saveEmployee(emp)).thenReturn(null);
+		RequestBuilder request = MockMvcRequestBuilders.post("/employee").accept(MediaType.APPLICATION_JSON).content(asJsonString(emp));
+		mockMvc.perform(request).andExpect(status().isOk());					
+	}
 	
-
+	public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
